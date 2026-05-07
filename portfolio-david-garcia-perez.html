@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>David García Pérez – Administrador de Sistemas</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --dark: #0D0D0D;
+    --dark2: #141414;
+    --dark3: #1C1C1C;
+    --dark4: #242424;
+    --text: #E8E4DC;
+    --muted: #7A7568;
+    --accent: #C9A84C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--gold);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.25s ease, width 0.3s ease, height 0.3s ease, opacity 0.3s;
+    opacity: 0.5;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.4;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(13,13,13,0.7);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    right: 38%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.2), transparent);
+  }
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 70% 80% at 70% 50%, black 30%, transparent 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 680px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 6px 14px;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  h1 .line { display: block; overflow: hidden; }
+  h1 .accent { color: var(--gold); }
+
+  .hero-sub {
+    margin-top: 28px;
+    font-size: 0.8rem;
+    line-height: 1.8;
+    color: var(--muted);
+    max-width: 480px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-cta {
+    margin-top: 40px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: var(--dark);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 500;
+    border: none;
+    cursor: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-outline {
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: none;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .btn-outline:hover { background: rgba(201,168,76,0.08); transform: translateY(-2px); }
+
+  /* Hero right – floating card */
+  .hero-card {
+    position: absolute;
+    right: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 280px;
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.15);
+    padding: 32px;
+    animation: fadeUp 0.8s 0.4s ease both;
+  }
+  .hero-card-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #8B6914);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--dark);
+    margin-bottom: 20px;
+  }
+  .hero-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .hero-card p { font-size: 0.65rem; color: var(--muted); margin-bottom: 20px; }
+  .hero-card-stat {
+    display: flex; justify-content: space-between;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    padding-top: 16px;
+    margin-top: 8px;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--gold);
+    display: block;
+  }
+  .stat-label { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em; }
+  .status-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.6rem;
+    color: #5DB075;
+    margin-top: 16px;
+  }
+  .status-dot::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #5DB075;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  /* SECTIONS common */
+  section { padding: 100px 48px; }
+  .section-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    max-width: 60px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.4;
+  }
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 56px;
+  }
+
+  /* SOBRE MÍ */
+  #sobre-mi { background: var(--dark2); }
+  .sobre-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .sobre-text p {
+    font-size: 0.82rem;
+    line-height: 1.9;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .sobre-text p strong { color: var(--text); font-weight: 400; }
+  .sobre-info { display: flex; flex-direction: column; gap: 16px; margin-top: 32px; }
+  .info-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 0.72rem;
+  }
+  .info-key { color: var(--gold); min-width: 100px; }
+  .info-val { color: var(--muted); }
+  .sobre-visual {
+    position: relative;
+  }
+  .sobre-box {
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.12);
+    padding: 40px;
+    position: relative;
+  }
+  .sobre-box::before {
+    content: '{ }';
+    position: absolute;
+    top: -16px; right: 24px;
+    background: var(--gold);
+    color: var(--dark);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    letter-spacing: 0.1em;
+  }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 10px; }
+  .tag {
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 6px 14px;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .tag:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* EXPERIENCIA */
+  #experiencia { background: var(--dark); }
+  .exp-list { display: flex; flex-direction: column; gap: 0; }
+  .exp-item {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 40px;
+    padding: 40px 0;
+    border-top: 1px solid rgba(201,168,76,0.1);
+    position: relative;
+    transition: background 0.2s;
+  }
+  .exp-item:last-child { border-bottom: 1px solid rgba(201,168,76,0.1); }
+  .exp-meta { }
+  .exp-period {
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .exp-company {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .exp-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(201,168,76,0.06);
+    line-height: 1;
+    margin-top: 8px;
+  }
+  .exp-role {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+  }
+  .exp-tasks { list-style: none; }
+  .exp-tasks li {
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 6px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .exp-tasks li::before {
+    content: '→';
+    color: var(--gold);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* HABILIDADES */
+  #habilidades { background: var(--dark2); }
+  .skills-section-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .skills-col h3, .projects-col h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+  .skill-card {
+    background: var(--dark3);
+    padding: 32px 24px;
+    border: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s, transform 0.3s;
+    cursor: none;
+  }
+  .skill-card:hover {
+    border-color: rgba(201,168,76,0.3);
+    background: var(--dark4);
+    transform: translateY(-4px);
+  }
+  .skill-icon {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .skill-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+  .skill-level {
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .skill-bar {
+    height: 2px;
+    background: rgba(201,168,76,0.1);
+    margin-top: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 1s ease;
+  }
+
+  /* PROYECTOS PDF */
+  .projects-col { }
+  .projects-list { display: flex; flex-direction: column; gap: 2px; }
+  .project-card {
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.1);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.25s, background 0.25s, transform 0.25s;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card:hover {
+    border-color: rgba(201,168,76,0.4);
+    background: var(--dark4);
+    transform: translateX(4px);
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--gold);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s ease;
+  }
+  .project-card:hover::after { transform: scaleY(1); }
+  .project-icon {
+    width: 44px; height: 44px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .project-info { flex: 1; min-width: 0; }
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+  }
+  .project-meta { font-size: 0.6rem; color: var(--muted); letter-spacing: 0.08em; }
+  .project-view-btn {
+    color: var(--gold);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 6px 12px;
+    background: none;
+    flex-shrink: 0;
+    transition: background 0.2s, color 0.2s;
+    cursor: none;
+    font-family: 'DM Mono', monospace;
+  }
+  .project-view-btn:hover { background: rgba(201,168,76,0.1); }
+
+  /* Modal visor PDF */
+  .pdf-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(6px);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .pdf-modal.open { display: flex; }
+  .pdf-modal-header {
+    width: 90vw;
+    max-width: 900px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0 10px;
+  }
+  .pdf-modal-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+  .pdf-modal-close {
+    background: none;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 6px 14px;
+    cursor: none;
+    letter-spacing: 0.1em;
+    transition: background 0.2s;
+  }
+  .pdf-modal-close:hover { background: rgba(201,168,76,0.1); }
+  .pdf-modal-frame {
+    width: 90vw;
+    max-width: 900px;
+    height: 80vh;
+    border: 1px solid rgba(201,168,76,0.15);
+    background: #1a1a1a;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Capa de bloqueo sobre el iframe para impedir clic derecho y descarga */
+  .pdf-modal-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .pdf-modal-frame canvas {
+    display: block;
+    margin: 0 auto;
+  }
+  .pdf-canvas-wrap {
+    width: 100%; height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 0;
+  }
+  .pdf-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 0 4px;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+  .pdf-nav button {
+    background: none;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    padding: 4px 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    cursor: none;
+    transition: background 0.2s;
+  }
+  .pdf-nav button:hover { background: rgba(201,168,76,0.1); }
+  .pdf-nav button:disabled { opacity: 0.3; cursor: default; }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 1px dashed rgba(201,168,76,0.25);
+    padding: 32px 20px;
+    text-align: center;
+    transition: border-color 0.25s, background 0.25s;
+    cursor: none;
+    position: relative;
+  }
+  .upload-zone.drag-over {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.05);
+  }
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%; height: 100%;
+  }
+  .upload-icon { font-size: 1.6rem; margin-bottom: 10px; display: block; }
+  .upload-text { font-size: 0.7rem; color: var(--muted); line-height: 1.6; }
+  .upload-text span { color: var(--gold); }
+  .upload-note { font-size: 0.6rem; color: var(--muted); margin-top: 6px; opacity: 0.6; }
+
+  @media (max-width: 900px) {
+    .skills-section-layout { grid-template-columns: 1fr; gap: 40px; }
+  }
+  #formacion { background: var(--dark); }
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .edu-card {
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.1);
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .edu-card:hover { border-color: rgba(201,168,76,0.35); transform: translateY(-4px); }
+  .edu-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .edu-card:hover::after { transform: scaleX(1); }
+  .edu-degree {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .edu-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+  .edu-school { font-size: 0.7rem; color: var(--muted); }
+  .edu-year {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 2.5rem;
+    color: rgba(201,168,76,0.07);
+    position: absolute;
+    bottom: 16px; right: 24px;
+    line-height: 1;
+  }
+
+  /* CONTACTO */
+  #contacto {
+    background: var(--dark2);
+    text-align: center;
+  }
+  .contacto-inner { max-width: 600px; margin: 0 auto; }
+  .contacto-inner h2 { text-align: center; }
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 40px;
+  }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 28px;
+    background: var(--dark3);
+    border: 1px solid rgba(201,168,76,0.1);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 0.8rem;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: none;
+  }
+  .contact-link:hover {
+    border-color: rgba(201,168,76,0.35);
+    background: var(--dark4);
+  }
+  .contact-link-label { color: var(--gold); font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; }
+  .contact-link-arrow { color: var(--gold); }
+
+  /* FOOTER */
+  footer {
+    padding: 24px 48px;
+    border-top: 1px solid rgba(201,168,76,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 20px 24px; }
+    nav .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    #hero { padding: 120px 24px 80px; }
+    .hero-card { display: none; }
+    .sobre-grid { grid-template-columns: 1fr; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .exp-item { grid-template-columns: 1fr; gap: 12px; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <a href="#hero" class="nav-logo">DG_</a>
+  <ul class="nav-links">
+    <li><a href="#sobre-mi">Sobre mí</a></li>
+    <li><a href="#experiencia">Experiencia</a></li>
+    <li><a href="#habilidades">Habilidades</a></li>
+    <li><a href="#habilidades">Proyectos</a></li>
+    <li><a href="#formacion">Formación</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-bg-line"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Disponible · Córdoba, España</div>
+    <h1>
+      <span class="line">David</span>
+      <span class="line">García <span class="accent">Pérez</span></span>
+    </h1>
+    <p class="hero-sub">
+      Administrador de Sistemas Informáticos en Red con enfoque proactivo y orientado a resultados. Especializado en redes, virtualización y administración de sistemas Windows y Linux.
+    </p>
+    <div class="hero-cta">
+      <a href="#contacto" class="btn-primary">Contactar</a>
+      <a href="#experiencia" class="btn-outline">Ver experiencia</a>
+    </div>
+  </div>
+
+  <div class="hero-card">
+    <div class="hero-card-avatar">DG</div>
+    <h3>David García</h3>
+    <p>Técnico Informático · Córdoba</p>
+    <div class="hero-card-stat">
+      <div class="stat-item">
+        <span class="stat-num">2</span>
+        <span class="stat-label">Empleos</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Tools</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">2</span>
+        <span class="stat-label">Titulos</span>
+      </div>
+    </div>
+    <div class="status-dot">Disponibilidad inmediata</div>
+  </div>
+</section>
+
+<!-- SOBRE MÍ -->
+<section id="sobre-mi">
+  <div class="section-label">01 — Sobre mí</div>
+  <h2>¿Quién soy?</h2>
+  <div class="sobre-grid reveal">
+    <div class="sobre-text">
+      <p>Soy un <strong>Administrador de Sistemas Informáticos en Red</strong> con formación técnica sólida y experiencia práctica en entornos reales. Me caracterizo por un enfoque proactivo y mi constante voluntad de aprender y mejorar.</p>
+      <p>Me apasiona la <strong>administración de sistemas, redes y nuevas tecnologías</strong>. Busco aportar soluciones eficientes y seguir creciendo dentro del sector IT con una actitud comprometida y adaptable.</p>
+      <p>Destaco por mi <strong>capacidad de adaptación, trabajo en equipo</strong> y habilidades comunicativas en entornos técnicos.</p>
+      <div class="sobre-info">
+        <div class="info-row"><span class="info-key">// ubicación</span><span class="info-val">Córdoba, España</span></div>
+        <div class="info-row"><span class="info-key">// idiomas</span><span class="info-val">Español nativo · Inglés básico</span></div>
+        <div class="info-row"><span class="info-key">// estado</span><span class="info-val">Disponibilidad inmediata</span></div>
+        <div class="info-row"><span class="info-key">// horario</span><span class="info-val">Flexibilidad horaria</span></div>
+      </div>
+    </div>
+    <div class="sobre-visual">
+      <div class="sobre-box">
+        <div class="tag-cloud">
+          <span class="tag">Sistemas Windows</span>
+          <span class="tag">Linux</span>
+          <span class="tag">Redes LAN</span>
+          <span class="tag">VirtualBox</span>
+          <span class="tag">Odoo</span>
+          <span class="tag">WordPress</span>
+          <span class="tag">Windows Server</span>
+          <span class="tag">Hardware</span>
+          <span class="tag">Software</span>
+          <span class="tag">Gestión usuarios</span>
+          <span class="tag">Ofimática</span>
+          <span class="tag">Virtualización</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCIA -->
+<section id="experiencia">
+  <div class="section-label">02 — Experiencia</div>
+  <h2>Trayectoria<br>profesional</h2>
+  <div class="exp-list">
+
+    <div class="exp-item reveal">
+      <div class="exp-meta">
+        <div class="exp-period">09/2025 – 12/2025</div>
+        <div class="exp-company">Rother · Córdoba</div>
+        <div class="exp-num">01</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-role">Técnico Informático</div>
+        <ul class="exp-tasks">
+          <li>Manejo y administración del sistema ERP Odoo</li>
+          <li>Gestión y control de inventario del laboratorio</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-meta">
+        <div class="exp-period">03/2023 – 06/2023</div>
+        <div class="exp-company">Universidad de Córdoba</div>
+        <div class="exp-num">02</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-role">Técnico Informático <span style="font-size:0.7rem; color:var(--muted); font-family:'DM Mono'">(Prácticas)</span></div>
+        <ul class="exp-tasks">
+          <li>Montaje y desmontaje de equipos informáticos</li>
+          <li>Reparación y diagnóstico de equipos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item reveal">
+      <div class="exp-meta">
+        <div class="exp-period">Continuo</div>
+        <div class="exp-company">Funciones habituales</div>
+        <div class="exp-num">→</div>
+      </div>
+      <div class="exp-body">
+        <div class="exp-role">Funciones Principales</div>
+        <ul class="exp-tasks">
+          <li>Instalación, configuración y mantenimiento de equipos (hardware y software)</li>
+          <li>Administración de sistemas operativos Windows y Linux</li>
+          <li>Gestión de usuarios, permisos y recursos en red</li>
+          <li>Instalación y mantenimiento de redes locales (LAN)</li>
+          <li>Virtualización de sistemas con VirtualBox</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HABILIDADES + PROYECTOS -->
+<section id="habilidades">
+  <div class="section-label">03 — Habilidades & Proyectos</div>
+  <h2>Stack técnico<br>& proyectos</h2>
+  <div class="skills-section-layout reveal">
+
+    <!-- IZQUIERDA: Habilidades -->
+    <div class="skills-col">
+      <h3>// Habilidades</h3>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <span class="skill-icon">🖥️</span>
+          <div class="skill-name">Windows Server</div>
+          <div class="skill-level">Intermedio</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:70%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🐧</span>
+          <div class="skill-name">Linux</div>
+          <div class="skill-level">Intermedio</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:65%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🌐</span>
+          <div class="skill-name">Redes LAN</div>
+          <div class="skill-level">Sólido</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:72%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">📦</span>
+          <div class="skill-name">Odoo ERP</div>
+          <div class="skill-level">Básico–Medio</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:55%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">⚙️</span>
+          <div class="skill-name">VirtualBox</div>
+          <div class="skill-level">Intermedio</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:68%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🌍</span>
+          <div class="skill-name">WordPress</div>
+          <div class="skill-level">Básico–Medio</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:50%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🔧</span>
+          <div class="skill-name">Hardware</div>
+          <div class="skill-level">Avanzado</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:88%"></div></div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">📄</span>
+          <div class="skill-name">Ofimática</div>
+          <div class="skill-level">Avanzado</div>
+          <div class="skill-bar"><div class="skill-bar-fill" style="width:88%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DERECHA: Proyectos -->
+    <div class="projects-col">
+      <h3>// Proyectos</h3>
+
+      <!-- Zona de subida -->
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" accept=".pdf" multiple id="pdfInput">
+        <span class="upload-icon">📂</span>
+        <div class="upload-text">
+          Arrastra tus PDFs aquí o <span>haz clic para seleccionar</span>
+        </div>
+        <div class="upload-note">Solo archivos .pdf</div>
+      </div>
+
+      <!-- Lista de proyectos -->
+      <div class="projects-list" id="projectsList" style="margin-top:2px;"></div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FORMACIÓN -->
+<section id="formacion">
+  <div class="section-label">04 — Formación</div>
+  <h2>Educación<br>& titulación</h2>
+  <div class="edu-grid reveal">
+    <div class="edu-card">
+      <div class="edu-degree">Grado Superior · FP</div>
+      <div class="edu-title">Administración de Sistemas Informáticos en Red</div>
+      <div class="edu-school">CES López de Vega · Córdoba<br><span style="color:var(--gold);font-size:0.65rem">09/2023 – 12/2025</span></div>
+      <div class="edu-year">ASIR</div>
+    </div>
+    <div class="edu-card">
+      <div class="edu-degree">Grado Medio · FP</div>
+      <div class="edu-title">Sistemas Microinformáticos y Redes</div>
+      <div class="edu-school">CES López de Vega · Córdoba<br><span style="color:var(--gold);font-size:0.65rem">09/2021 – 06/2023</span></div>
+      <div class="edu-year">SMR</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="contacto-inner">
+    <div class="section-label" style="justify-content:center">05 — Contacto</div>
+    <h2>Hablemos</h2>
+    <p class="reveal" style="font-size:0.78rem;color:var(--muted);margin-bottom:8px;">¿Tienes una oportunidad o proyecto? Estoy disponible con incorporación inmediata.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:davidgp1886@gmail.com" class="contact-link">
+        <div>
+          <div class="contact-link-label">// email</div>
+          <div>davidgp1886@gmail.com</div>
+        </div>
+        <span class="contact-link-arrow">→</span>
+      </a>
+
+      <div class="contact-link" style="cursor:default">
+        <div>
+          <div class="contact-link-label">// ubicación</div>
+          <div>Córdoba, España</div>
+        </div>
+        <span class="contact-link-arrow">📍</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL VISOR PDF -->
+<div class="pdf-modal" id="pdfModal">
+  <div class="pdf-modal-header">
+    <div class="pdf-modal-title" id="pdfModalTitle">Proyecto</div>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <div class="pdf-nav">
+        <button id="prevPage">← Ant.</button>
+        <span id="pageInfo">Pág. 1 / 1</span>
+        <button id="nextPage">Sig. →</button>
+      </div>
+      <button class="pdf-modal-close" id="pdfModalClose">✕ Cerrar</button>
+    </div>
+  </div>
+  <div class="pdf-modal-frame">
+    <div class="pdf-canvas-wrap" id="pdfCanvasWrap">
+      <canvas id="pdfCanvas"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<footer>
+  <span>© 2026 David García Pérez</span>
+  <span>Administrador de Sistemas · Córdoba</span>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx) * 0.12;
+    ry += (my - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .skill-card, .edu-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width = '20px';
+      cursor.style.height = '20px';
+      ring.style.width = '56px';
+      ring.style.height = '56px';
+      ring.style.opacity = '0.8';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width = '12px';
+      cursor.style.height = '12px';
+      ring.style.width = '36px';
+      ring.style.height = '36px';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Skill bars animate on visible
+  const barObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.skill-bar-fill').forEach(bar => {
+          const w = bar.style.width;
+          bar.style.width = '0';
+          setTimeout(() => bar.style.width = w, 200);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('.skills-grid').forEach(g => barObserver.observe(g));
+
+  // PDF Projects upload
+  const pdfInput = document.getElementById('pdfInput');
+  const uploadZone = document.getElementById('uploadZone');
+  const projectsList = document.getElementById('projectsList');
+  let projects = [];
+
+  // Modal & pdf.js
+  const modal = document.getElementById('pdfModal');
+  const modalTitle = document.getElementById('pdfModalTitle');
+  const modalClose = document.getElementById('pdfModalClose');
+  const pdfCanvas = document.getElementById('pdfCanvas');
+  const pageInfo = document.getElementById('pageInfo');
+  const prevBtn = document.getElementById('prevPage');
+  const nextBtn = document.getElementById('nextPage');
+  let pdfDoc = null, currentPage = 1;
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  async function renderPage(num) {
+    const page = await pdfDoc.getPage(num);
+    const viewport = page.getViewport({ scale: Math.min(window.innerWidth * 0.85 / page.getViewport({scale:1}).width, 1.6) });
+    const ctx = pdfCanvas.getContext('2d');
+    pdfCanvas.width = viewport.width;
+    pdfCanvas.height = viewport.height;
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    pageInfo.textContent = `Pág. ${num} / ${pdfDoc.numPages}`;
+    prevBtn.disabled = num <= 1;
+    nextBtn.disabled = num >= pdfDoc.numPages;
+  }
+
+  async function openPDF(arrayBuffer, name) {
+    modalTitle.textContent = name;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    currentPage = 1;
+    pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    renderPage(currentPage);
+  }
+
+  prevBtn.addEventListener('click', () => { if (currentPage > 1) renderPage(--currentPage); });
+  nextBtn.addEventListener('click', () => { if (currentPage < pdfDoc.numPages) renderPage(++currentPage); });
+
+  modalClose.addEventListener('click', () => {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    pdfDoc = null;
+  });
+  modal.addEventListener('click', e => {
+    if (e.target === modal) { modal.classList.remove('open'); document.body.style.overflow = ''; }
+  });
+
+  // Bloquear clic derecho en el modal
+  modal.addEventListener('contextmenu', e => e.preventDefault());
+
+  function formatSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / 1048576).toFixed(1) + ' MB';
+  }
+
+  function renderProjects() {
+    projectsList.innerHTML = '';
+    if (projects.length === 0) return;
+    projects.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'project-card';
+      card.innerHTML = `
+        <div class="project-icon">📄</div>
+        <div class="project-info">
+          <div class="project-name" title="${p.name}">${p.name.replace('.pdf','')}</div>
+          <div class="project-meta">PDF · ${formatSize(p.size)}</div>
+        </div>
+        <button class="project-view-btn" data-idx="${i}">👁 Ver</button>
+        <span style="color:var(--muted);font-size:0.7rem;margin-left:8px;cursor:pointer;" data-del="${i}" title="Eliminar">✕</span>
+      `;
+      card.querySelector('.project-view-btn').addEventListener('click', function() {
+        const idx = parseInt(this.getAttribute('data-idx'));
+        openPDF(projects[idx].buffer.slice(0), projects[idx].name);
+      });
+      card.querySelector('[data-del]').addEventListener('click', function() {
+        projects.splice(parseInt(this.getAttribute('data-del')), 1);
+        renderProjects();
+      });
+      projectsList.appendChild(card);
+    });
+  }
+
+  function handleFiles(files) {
+    Array.from(files).forEach(file => {
+      if (file.type !== 'application/pdf') return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        projects.push({ name: file.name, size: file.size, buffer: e.target.result });
+        renderProjects();
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  }
+
+  pdfInput.addEventListener('change', e => handleFiles(e.target.files));
+  uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', e => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    handleFiles(e.dataTransfer.files);
+  });
+</script>
+</body>
+</html>

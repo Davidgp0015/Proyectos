@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html class="light" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Bar García - Tradición Renovada</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@500;600&amp;family=Work+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "accent": "#4B5320",
+                "primary": "#111111",
+                "secondary": "#5e5e5b",
+                "background": "#fdf8f8",
+                "on-background": "#1c1b1b",
+                "outline-variant": "#c4c7c7"
+              },
+              "fontFamily": {
+                "price-label": ["Work Sans"],
+                "item-title": ["Noto Serif"],
+                "item-description": ["Work Sans"],
+                "section-header": ["Noto Serif"],
+                "category-tag": ["Work Sans"]
+              }
+            }
+          }
+        }
+    </script>
+    <style>
+        .leader-line {
+            flex-grow: 1;
+            border-bottom: 1px dotted rgba(196, 199, 199, 0.5);
+            margin: 0 16px;
+            position: relative;
+            top: -6px;
+        }
+        .paper-texture {
+            background-color: #F8F5F0;
+            background-image: 
+                radial-gradient(ellipse at top, #FCFBF8 0%, #F5F1E8 60%, #EBE4D8 100%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+            background-attachment: fixed;
+        }
+        .view-hidden { display: none; }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            filter: grayscale(15%) contrast(95%);
+        }
+    </style>
+</head>
+<body class="paper-texture text-on-background antialiased min-h-screen flex flex-col">
+
+<!-- Encabezado con Navegación -->
+<header class="bg-[#FCFBF8]/80 backdrop-blur-md sticky top-0 border-b border-accent/20 z-50">
+    <div class="flex justify-between items-center px-6 py-4 w-full max-w-7xl mx-auto">
+        <div onclick="showView('menu')" class="font-section-header text-xl md:text-2xl text-primary uppercase tracking-tighter cursor-pointer">BAR GARCIA</div>
+        <nav class="hidden md:flex space-x-8">
+            <a class="text-secondary font-medium hover:text-accent transition-colors" href="#" onclick="showView('menu')">Carta</a>
+            <a class="text-secondary font-medium hover:text-accent transition-colors" href="#" onclick="showView('contacto')">Contacto</a>
+            <a class="text-secondary font-medium hover:text-accent transition-colors" href="#" onclick="showView('ubicacion')">Ubicación</a>
+        </nav>
+        <div class="text-secondary font-category-tag text-xs transition-colors flex space-x-2">
+            <span onclick="setLanguage('es')" class="cursor-pointer hover:text-accent font-bold" id="lang-es">ES</span>
+            <span>|</span>
+            <span onclick="setLanguage('en')" class="cursor-pointer hover:text-accent" id="lang-en">EN</span>
+        </div>
+    </div>
+</header>
+
+<!-- VISTA CARTA -->
+<main id="view-menu" class="flex-grow w-full max-w-5xl mx-auto px-6 py-12 md:py-20">
+    <div class="text-center mb-16 pb-8 border-b border-accent/20">
+        <h1 class="font-section-header text-4xl md:text-6xl text-primary uppercase tracking-tighter mb-2">BAR GARCIA</h1>
+        <p class="font-category-tag text-xs text-secondary uppercase tracking-widest">Tradición Renovada</p>
+    </div>
+
+    <div class="space-y-20">
+        <!-- BEBIDAS -->
+        <section id="bebidas" class="scroll-mt-32">
+            <div class="flex items-center justify-center mb-10">
+                <div class="h-px bg-accent/40 w-10"></div>
+                <h2 class="font-section-header text-2xl text-primary mx-4 text-center uppercase">Bebidas</h2>
+                <div class="h-px bg-accent/40 w-10"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-8">
+                <div>
+                    <span class="font-item-title text-lg text-primary block mb-3">Refrescos</span>
+                    <div class="space-y-2">
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Coca-Cola</span><div class="leader-line"></div><span class="font-price-label">2,20€</span></div>
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Fanta Naranja</span><div class="leader-line"></div><span class="font-price-label">2,20€</span></div>
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Fanta Limón</span><div class="leader-line"></div><span class="font-price-label">2,20€</span></div>
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Nestea Limón</span><div class="leader-line"></div><span class="font-price-label">2,20€</span></div>
+                    </div>
+                </div>
+                <div>
+                    <span class="font-item-title text-lg text-primary block mb-3">Cervezas</span>
+                    <div class="space-y-2">
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Maceta</span><div class="leader-line"></div><span class="font-price-label">3,50€</span></div>
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Mahou</span><div class="leader-line"></div><span class="font-price-label">3,00€</span></div>
+                        <div class="flex items-baseline"><span class="font-item-description text-secondary">Estrella Galicia</span><div class="leader-line"></div><span class="font-price-label">2,50€</span></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Vinos por Copa</span><div class="leader-line"></div><span class="font-price-label">4,00€</span></div>
+                    <p class="font-item-description text-secondary italic">Rioja tinto, Rueda blanco, Ribera rosado</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Copas y Combinados</span><div class="leader-line"></div><span class="font-price-label">9,00€</span></div>
+                    <p class="font-item-description text-secondary italic">Gin Tonic Premium, Ron Añejo</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAPAS -->
+        <section id="tapas" class="scroll-mt-32">
+            <div class="flex items-center justify-center mb-10">
+                <div class="h-px bg-accent/40 w-10"></div>
+                <h2 class="font-section-header text-2xl text-primary mx-4 text-center uppercase">Tapas</h2>
+                <div class="h-px bg-accent/40 w-10"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10">
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Aceitunas Aliñadas</span><div class="leader-line"></div><span class="font-price-label">3,50€</span></div>
+                    <p class="font-item-description text-secondary italic">Selección de la casa con hierbas aromáticas.</p>
+                    <div class="flex items-center mt-2 text-[#3b82f6] font-category-tag text-[10px] uppercase tracking-widest font-bold">
+                        <span class="w-2 h-2 rounded-full bg-[#3b82f6] mr-2"></span> Frías
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Ensaladilla Rusa</span><div class="leader-line"></div><span class="font-price-label">4,50€</span></div>
+                    <p class="font-item-description text-secondary italic">Receta tradicional con ventresca de atún.</p>
+                    <div class="flex items-center mt-2 text-[#3b82f6] font-category-tag text-[10px] uppercase tracking-widest font-bold">
+                        <span class="w-2 h-2 rounded-full bg-[#3b82f6] mr-2"></span> Frías
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Croquetas de Jamón</span><div class="leader-line"></div><span class="font-price-label">5,00€</span></div>
+                    <p class="font-item-description text-secondary italic">Cremosas por dentro, crujientes por fuera.</p>
+                    <div class="flex items-center mt-2 text-[#ef4444] font-category-tag text-[10px] uppercase tracking-widest font-bold">
+                        <span class="w-2 h-2 rounded-full bg-[#ef4444] mr-2"></span> Calientes
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Patatas Bravas</span><div class="leader-line"></div><span class="font-price-label">4,50€</span></div>
+                    <p class="font-item-description text-secondary italic">Con nuestra salsa brava ligeramente picante y alioli.</p>
+                    <div class="flex items-center mt-2 text-[#ef4444] font-category-tag text-[10px] uppercase tracking-widest font-bold">
+                        <span class="w-2 h-2 rounded-full bg-[#ef4444] mr-2"></span> Calientes
+                    </div>
+                </div>
+                <!-- ESPECIALIDADES -->
+                <div class="md:col-span-2 bg-yellow-50/50 border border-yellow-200 p-6 rounded-sm">
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Tortilla Deconstruida</span><div class="leader-line"></div><span class="font-price-label">6,50€</span></div>
+                    <p class="font-item-description text-secondary italic">Nuestra visión moderna del clásico, servida en copa.</p>
+                    <div class="flex items-center mt-2 text-yellow-700 font-category-tag text-[10px] uppercase tracking-widest font-bold">
+                        <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span> Especialidad
+                    </div>
+                </div>
+                <div class="md:col-span-2 bg-yellow-50/50 border border-yellow-200 p-6 rounded-sm">
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Pulpo a la Brasa</span><div class="leader-line"></div><span class="font-price-label">12,00€</span></div>
+                    <p class="font-item-description text-secondary italic">Sobre parmentier de patata y pimentón de la Vera.</p>
+                    <div class="flex items-center mt-2 text-yellow-700 font-category-tag text-[10px] uppercase tracking-widest font-bold">
+                        <span class="w-2 h-2 rounded-full bg-yellow-500 mr-2"></span> Especialidad
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RACIONES -->
+        <section id="raciones" class="scroll-mt-32">
+            <div class="flex items-center justify-center mb-10">
+                <div class="h-px bg-accent/40 w-10"></div>
+                <h2 class="font-section-header text-2xl text-primary mx-4 text-center uppercase">Raciones</h2>
+                <div class="h-px bg-accent/40 w-10"></div>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-10">
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Tabla de Ibéricos</span><div class="leader-line"></div><span class="font-price-label">22,00€</span></div>
+                    <p class="font-item-description text-secondary">Exquisita selección de jamón ibérico de bellota, lomo, chorizo y salchichón, acompañados de picos rústicos.</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Calamares a la Andaluza</span><div class="leader-line"></div><span class="font-price-label">14,50€</span></div>
+                    <p class="font-item-description text-secondary">Anillas de calamar fresco fritas con un rebozado ligero y crujiente, servidas con mayonesa cítrica.</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Huevos Rotos con Jamón</span><div class="leader-line"></div><span class="font-price-label">16,00€</span></div>
+                    <p class="font-item-description text-secondary">Huevos de corral estrellados sobre patatas confitadas en aceite de oliva y coronados con virutas de jamón ibérico.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOCADILLOS -->
+        <section id="bocadillos" class="scroll-mt-32">
+            <div class="flex items-center justify-center mb-10">
+                <div class="h-px bg-accent/40 w-10"></div>
+                <h2 class="font-section-header text-2xl text-primary mx-4 text-center uppercase">Bocadillos & Montaditos</h2>
+                <div class="h-px bg-accent/40 w-10"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-10">
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Calamares con Alioli</span><div class="leader-line"></div><span class="font-price-label">7,50€</span></div>
+                    <p class="font-item-description text-secondary italic">El clásico madrileño en pan de cristal con suave alioli casero.</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Serranito de Lomo</span><div class="leader-line"></div><span class="font-price-label">8,00€</span></div>
+                    <p class="font-item-description text-secondary italic">Lomo de cerdo a la plancha, jamón serrano, pimiento frito y rodajas de tomate.</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline"><span class="font-item-title text-lg text-primary">Montadito de Pringá</span><div class="leader-line"></div><span class="font-price-label">4,50€</span></div>
+                    <p class="font-item-description text-secondary italic">Desmigado de carnes del cocido fundido y untuoso en pan tostado.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- POSTRES -->
+        <section id="postres" class="scroll-mt-32">
+            <div class="flex items-center justify-center mb-10">
+                <div class="h-px bg-accent/40 w-10"></div>
+                <h2 class="font-section-header text-2xl text-primary mx-4 text-center uppercase">Postres</h2>
+                <div class="h-px bg-accent/40 w-10"></div>
+            </div>
+            <div class="max-w-xl mx-auto text-center space-y-10">
+                <div>
+                    <div class="flex items-baseline justify-center"><span class="font-item-title text-lg text-primary">Tarta de Queso Casera</span><span class="mx-2 text-accent">·</span><span class="font-price-label">6,50€</span></div>
+                    <p class="font-item-description text-secondary italic mt-1">Horneada diariamente, textura cremosa y suave sabor a queso fresco.</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline justify-center"><span class="font-item-title text-lg text-primary">Torrija Caramelizada</span><span class="mx-2 text-accent">·</span><span class="font-price-label">6,00€</span></div>
+                    <p class="font-item-description text-secondary italic mt-1">En pan brioche, caramelizada al momento y servida con helado de vainilla.</p>
+                </div>
+                <div>
+                    <div class="flex items-baseline justify-center"><span class="font-item-title text-lg text-primary">Fruta de Temporada</span><span class="mx-2 text-accent">·</span><span class="font-price-label">4,50€</span></div>
+                    <p class="font-item-description text-secondary italic mt-1">Selección fresca del mercado preparada y lista para comer.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<!-- VISTA CONTACTO -->
+<main id="view-contacto" class="view-hidden flex-grow w-full max-w-2xl mx-auto px-6 py-12 md:py-24">
+    <div class="text-center mb-16">
+        <h2 class="font-section-header text-4xl text-primary uppercase mb-4">Contacto</h2>
+        <div class="h-1 bg-accent/20 w-24 mx-auto"></div>
+    </div>
+    <div class="space-y-12 bg-white/40 p-8 border border-accent/10 rounded-sm text-center shadow-sm">
+        <div>
+            <span class="material-symbols-outlined text-accent text-3xl mb-2">call</span>
+            <h3 class="font-category-tag text-secondary uppercase tracking-widest mb-1">Llámanos</h3>
+            <a href="tel:+34912345678" class="font-item-title text-2xl text-primary hover:text-accent transition-colors">+34 912 34 56 78</a>
+        </div>
+        <div>
+            <span class="material-symbols-outlined text-accent text-3xl mb-2">share</span>
+            <h3 class="font-category-tag text-secondary uppercase tracking-widest mb-4">Síguenos</h3>
+            <div class="flex justify-center space-x-8">
+                <a href="#" class="text-secondary hover:text-accent transition-colors font-category-tag text-xs uppercase border border-accent/20 px-4 py-2">Instagram</a>
+                <a href="#" class="text-secondary hover:text-accent transition-colors font-category-tag text-xs uppercase border border-accent/20 px-4 py-2">Facebook</a>
+            </div>
+        </div>
+        <div class="pt-8 border-t border-accent/10">
+            <h3 class="font-category-tag text-secondary uppercase tracking-widest mb-4">Horario</h3>
+            <p class="font-item-description text-secondary">Martes a Sábado: 13:00 - 00:00</p>
+            <p class="font-item-description text-secondary">Domingo: 13:00 - 17:00</p>
+        </div>
+    </div>
+</main>
+
+<!-- VISTA UBICACIÓN -->
+<main id="view-ubicacion" class="view-hidden flex-grow w-full max-w-4xl mx-auto px-6 py-12 md:py-24">
+    <div class="text-center mb-12">
+        <h2 class="font-section-header text-4xl text-primary uppercase mb-4">Dónde Estamos</h2>
+        <p class="font-item-description text-secondary italic">Encuéntranos en Córdoba</p>
+        <div class="h-1 bg-accent/20 w-24 mx-auto mt-4"></div>
+    </div>
+    
+    <div class="max-w-2xl mx-auto space-y-8">
+        <!-- Información de Ubicación -->
+        <div class="bg-white/40 p-6 border border-accent/10 rounded-sm shadow-sm text-center">
+            <div class="flex flex-col items-center space-y-2">
+                <span class="material-symbols-outlined text-accent text-3xl">location_on</span>
+                <div>
+                    <p class="font-item-title text-xl text-primary">Bar García</p>
+                    <p class="font-item-description text-secondary">Córdoba, España</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Street View Iframe Centrado -->
+        <div class="bg-white/40 p-2 border border-accent/10 rounded-sm shadow-md map-container overflow-hidden aspect-video">
+            <iframe src="https://www.google.com/maps/embed?pb=!4v1778081893551!6m8!1m7!1sJzv59cemTptBw5UiA3MZgA!2m2!1d37.88687281274652!2d-4.756805891675167!3f317.8128388457241!4f5.396285816838315!5f0.7820865974627469" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+    </div>
+
+    <div class="text-center mt-12">
+        <button onclick="showView('menu')" class="font-category-tag text-xs border border-primary px-6 py-2 hover:bg-primary hover:text-white transition-all uppercase tracking-widest">
+            Volver a la Carta
+        </button>
+    </div>
+</main>
+
+<footer class="w-full py-12 border-t border-accent/20 mt-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center px-6 space-y-6 md:space-y-0 w-full max-w-7xl mx-auto">
+        <div class="font-category-tag text-xs text-primary uppercase">© 2024 Bar García - Córdoba</div>
+        <nav class="flex space-x-8">
+            <a class="font-item-description text-sm text-secondary hover:text-accent transition-colors" href="#" onclick="showView('contacto')">Contacto</a>
+            <a class="font-item-description text-sm text-secondary hover:text-accent transition-colors" href="#" onclick="showView('ubicacion')">Ubicación</a>
+        </nav>
+    </div>
+</footer>
+
+<script>
+    function showView(viewName) {
+        const views = {
+            'menu': document.getElementById('view-menu'),
+            'contacto': document.getElementById('view-contacto'),
+            'ubicacion': document.getElementById('view-ubicacion')
+        };
+        Object.values(views).forEach(v => v.classList.add('view-hidden'));
+        if (views[viewName]) {
+            views[viewName].classList.remove('view-hidden');
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function setLanguage(lang) {
+        document.getElementById('lang-es').classList.toggle('font-bold', lang === 'es');
+        document.getElementById('lang-en').classList.toggle('font-bold', lang === 'en');
+    }
+</script>
+
+</body>
+</html>
